@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CarlosRay4</string>
+    <string name="title_home">Jokes</string>
+    <string name="title_Web">Web</string>
+    <string name="txtButton">RELOAD</string>
+    <string name="txtCount">Count</string>
+    <string name="jokes">Joke</string>
+</resources>
