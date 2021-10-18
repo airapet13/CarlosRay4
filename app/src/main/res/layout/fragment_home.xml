@@ -27,15 +27,16 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:minHeight="48dp"
-        android:text="@string/txtCount"
+        android:hint="Count"
+        android:textColorHint="@color/main"
         android:textColor="@color/main"
         app:layout_constraintBottom_toTopOf="@+id/reload"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/jokes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="@string/jokes"

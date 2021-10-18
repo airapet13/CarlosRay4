@@ -35,7 +35,10 @@ class WebFragment : Fragment() {
             textView.text = it
         })
         return root
+
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
