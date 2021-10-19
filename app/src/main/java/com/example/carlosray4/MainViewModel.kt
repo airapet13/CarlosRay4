@@ -6,12 +6,11 @@ import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
+import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.IOException
+import java.net.InetAddress
 
 class MainViewModel(private val context: Context) : ViewModel() {
 
@@ -21,25 +20,16 @@ class MainViewModel(private val context: Context) : ViewModel() {
     val url = "https://api.icndb.com/jokes/random?"
 
     fun getJoke(count: Int) {
-        var jokes = ""
-        val queue = Volley.newRequestQueue(context)
+//        var myArray = arrayOf("")
+        resultLiveMutable.value = ""
         for (i in 1..count) {
-            val stringRequest = StringRequest(
-                Request.Method.GET, url,
-                Response.Listener<String?> { response ->
-                    a = response.toString()
-                },
-                Response.ErrorListener { a = "That didn't work!" })
-            queue.add(stringRequest)
-            try {
-                Log.e("AAA", "Шутка: $a")
-                val jsonObject = JSONObject(a)
-                jokes = jokes + jsonObject.getJSONObject("value").getString("joke") + "\n\n"
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
+            resultLiveMutable.value = resultLiveMutable.value + getJoke1()
         }
-        resultLiveMutable.value = jokes.replace("&quot;", "\"")
+
+
+
+//        resultLiveMutable.value = jokes.replace("&quot;", "\"")
+//
     }
 
     init {
@@ -51,4 +41,37 @@ class MainViewModel(private val context: Context) : ViewModel() {
         Log.e("AAA","VM cleared")
         super.onCleared()
     }
+}
+var a = ""
+fun getJoke1(): String {
+    var jokes = ""
+    val okHttpClient = OkHttpClient()
+    val request = Request.Builder()
+        .url("https://api.icndb.com/jokes/random?")
+        .build()
+
+    okHttpClient.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+            for ((name, value) in response.headers) {
+                println("$name: $value")
+            }
+            a = response.body!!.string()
+            Log.e("AAA", "Response ->    $response")
+            Log.e("AAA", "Хрень под принтлном $a")
+        }
+    })
+    try {
+        Log.e("AAA", "Шутка: $a")
+        val jsonObject = JSONObject(a)
+        jokes = jsonObject.getJSONObject("value").getString("joke") + "\n\n"
+    } catch (e: JSONException) {
+        e.printStackTrace()
+    }
+    return jokes
 }
