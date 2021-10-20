@@ -2,7 +2,6 @@ package com.example.carlosray4
 
 import android.content.Context
 import android.util.Log
-import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,31 +9,28 @@ import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.net.InetAddress
 
 class MainViewModel(private val context: Context) : ViewModel() {
 
-    var resultLiveMutable = MutableLiveData<String>()
-    var resultLive: LiveData<String> = resultLiveMutable
+    var resultLiveMutable = MutableLiveData<List<String>>()
+    var resultLive: LiveData<List<String>> = resultLiveMutable
     var a: String = ""
     val url = "https://api.icndb.com/jokes/random?"
 
     fun getJoke(count: Int) {
-//        var myArray = arrayOf("")
-        resultLiveMutable.value = ""
         for (i in 1..count) {
-            resultLiveMutable.value = resultLiveMutable.value + getJoke1()
-        }
+            getJoke1()
+            }
+        Thread.sleep(1_500)  // wait 1.5 second
 
+        Log.e("AAA", "Data: $data")
 
-
-//        resultLiveMutable.value = jokes.replace("&quot;", "\"")
-//
+        resultLiveMutable.value = data
+        data = mutableListOf<String>()
     }
 
     init {
         Log.e("AAA","VM created")
-        getJoke(1)
     }
 
     override fun onCleared() {
@@ -42,36 +38,36 @@ class MainViewModel(private val context: Context) : ViewModel() {
         super.onCleared()
     }
 }
-var a = ""
-fun getJoke1(): String {
-    var jokes = ""
-    val okHttpClient = OkHttpClient()
+var  a = ""
+var data = mutableListOf<String>()
+val okHttpClient = OkHttpClient()
+fun getJoke1(){
     val request = Request.Builder()
         .url("https://api.icndb.com/jokes/random?")
         .build()
 
     okHttpClient.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-
+            e.printStackTrace()
         }
 
         override fun onResponse(call: Call, response: Response) {
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            response.use {
+                if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-            for ((name, value) in response.headers) {
-                println("$name: $value")
+                for ((name, value) in response.headers) {
+                    println("$name: $value")
+                }
+
+                try {
+                    Log.e("AAA", "Шутка: $response.body!!.string()")
+                    val jsonObject = JSONObject(response.body!!.string())
+                    data.add(jsonObject.getJSONObject("value").getString("joke").replace("&quot;", "\""))
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+                Log.e("AAA", "Data in okhttp: $data")
             }
-            a = response.body!!.string()
-            Log.e("AAA", "Response ->    $response")
-            Log.e("AAA", "Хрень под принтлном $a")
         }
     })
-    try {
-        Log.e("AAA", "Шутка: $a")
-        val jsonObject = JSONObject(a)
-        jokes = jsonObject.getJSONObject("value").getString("joke") + "\n\n"
-    } catch (e: JSONException) {
-        e.printStackTrace()
-    }
-    return jokes
 }

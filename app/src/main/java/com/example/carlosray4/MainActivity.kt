@@ -12,6 +12,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.carlosray4.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -47,18 +49,22 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
 
-        val reload: Button = findViewById(R.id.reload)
-        val count: TextView = findViewById(R.id.count)
-        val jokes: TextView = findViewById(R.id.jokes)
+        val reload = findViewById<Button>(R.id.reload)
+        val count = findViewById<TextView>(R.id.count)
+        val jokes = findViewById<RecyclerView>(R.id.jokes)
+        var data = mutableListOf<String>()
+        jokes.layoutManager = LinearLayoutManager(this)
+//        jokes.adapter = CustomRecyclerAdapter(data)
+
 
         vm.resultLive.observe(this, Observer {
-            jokes.text = it
+//            jokes.text = it
+            jokes.adapter = CustomRecyclerAdapter(it)
         })
 
         reload.setOnClickListener {
             vm.getJoke(count.text.toString().toInt())
+//            jokes.adapter = CustomRecyclerAdapter(vm.getJoke(count.text.toString().toInt()))
         }
     }
 }
-
-

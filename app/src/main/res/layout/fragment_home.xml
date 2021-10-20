@@ -12,7 +12,7 @@
         android:layout_width="132dp"
         android:layout_height="55dp"
         android:layout_marginStart="128dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="50dp"
         android:text="@string/txtButton"
         android:textColorHint="@color/main"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,7 +25,7 @@
         android:layout_marginStart="88dp"
         android:layout_marginBottom="16dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="number"
         android:minHeight="48dp"
         android:hint="Count"
         android:textColorHint="@color/main"
@@ -33,18 +33,14 @@
         app:layout_constraintBottom_toTopOf="@+id/reload"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/jokes"
         android:layout_width="match_parent"
         android:layout_height="450dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/jokes"
-        android:textSize="24dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/count"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp"
+        tools:listitem="@layout/recyclerview_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
