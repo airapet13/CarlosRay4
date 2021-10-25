@@ -5,4 +5,5 @@
     <string name="txtButton">RELOAD</string>
     <string name="txtCount">Count</string>
     <string name="jokes">Joke</string>
+    <string name="count">Count</string>
 </resources>

@@ -5,9 +5,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+
     <TextView
         android:id="@+id/textViewLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 </LinearLayout>
