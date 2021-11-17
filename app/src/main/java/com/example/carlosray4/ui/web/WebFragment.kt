@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.carlosray4.databinding.FragmentWebBinding
 
@@ -19,7 +18,7 @@ class WebFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
         webViewModel =
@@ -28,7 +27,7 @@ class WebFragment : Fragment() {
         _binding = FragmentWebBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        webViewModel.resultLiveMutable.observe(viewLifecycleOwner, Observer {
+        webViewModel.resultLiveMutable.observe(viewLifecycleOwner, {
             binding.browser.loadUrl(it)
         })
         webViewModel.getURL()

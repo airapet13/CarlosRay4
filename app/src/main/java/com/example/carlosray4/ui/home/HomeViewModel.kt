@@ -1,59 +1,49 @@
 package com.example.carlosray4.ui.home
 
-import androidx.lifecycle.*
-import okhttp3.*
-import org.json.JSONException
-import org.json.JSONObject
-import java.io.IOException
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.carlosray4.ApiRequests
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.awaitResponse
+import retrofit2.converter.gson.GsonConverterFactory
 
-class HomeViewModel() : ViewModel() {
+var data = mutableListOf<String>()
 
-    var resultLiveMutable = MutableLiveData<List<String>>()
+class HomeViewModel : ViewModel() {
+
+    private var resultLiveMutable = MutableLiveData<List<String>>()
     var resultLive: LiveData<List<String>> = resultLiveMutable
 
-    fun getJoke(count: String) {
-        if(count != ""){
-            for (i in 1..count.toInt()) {
-                getJoke1()
+    fun getCurrentData(count: String) {
+        if (count == "" || count.toInt() != 0 ) {
+            val api = Retrofit.Builder()
+                .baseUrl("https://api.icndb.com/jokes/random/${count}/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(ApiRequests::class.java)
+
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = api.getJoke().awaitResponse()
+                    if (response.isSuccessful) {
+                        for (i in 0 until count.toInt()) {
+                            data.add(response.body()!!.value[i].joke.replace("&quot;", "\""))
+                        }
+                    }
+                } catch (e: Exception) {
+                    data.add("Something went wrong, check your internet connection\n")
+                }
+                resultLiveMutable.postValue(data)
+                data = mutableListOf()
             }
-            Thread.sleep(1_500)
-            resultLiveMutable.value = data
-            data = mutableListOf<String>()
-        }
-        else{
-            resultLiveMutable.value = listOf("Count must not be empty")
+        } else {
+            data.add("Chuck's zero joke")
+            resultLiveMutable.postValue(data)
+            data = mutableListOf()
         }
     }
-}
-var data = mutableListOf<String>()
-val okHttpClient = OkHttpClient()
-fun getJoke1() {
-    val request = Request.Builder()
-        .url("https://api.icndb.com/jokes/random?")
-        .build()
-
-    okHttpClient.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            e.printStackTrace()
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            response.use {
-                if (!response.isSuccessful) throw IOException("Unexpected code $response")
-
-                for ((name, value) in response.headers) {
-                    println("$name: $value")
-                }
-
-                try {
-                    val jsonObject = JSONObject(response.body!!.string())
-                    data.add(
-                        jsonObject.getJSONObject("value").getString("joke").replace("&quot;", "\"")
-                    )
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    })
 }

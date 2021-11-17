@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.carlosray4.CustomRecyclerAdapter
@@ -16,14 +15,13 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
 
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -33,12 +31,12 @@ class HomeFragment : Fragment() {
 
         binding.jokes.layoutManager = LinearLayoutManager(requireContext())
 
-        homeViewModel.resultLive.observe(viewLifecycleOwner, Observer {
+        homeViewModel.resultLive.observe(viewLifecycleOwner, {
             binding.jokes.adapter = CustomRecyclerAdapter(it)
         })
 
         binding.reload.setOnClickListener {
-            homeViewModel.getJoke(binding.count.text.toString())
+            homeViewModel.getCurrentData(binding.count.text.toString())
         }
 
 
